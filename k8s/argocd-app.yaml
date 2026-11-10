@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mon-app-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/Fanidi-ahmed/mon-projet-k8s.git' # 👈 Ton URL GitHub
+    targetRevision: HEAD
+    path: k8s/overlays/dev # 👈 Le dossier que Argo CD doit surveiller
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: mon-app
+  syncPolicy:
+    automated:
+      prune: true    # Supprime les ressources si on les retire du Git
+      selfHeal: true # Corrige si quelqu'un modifie le cluster manuellement
