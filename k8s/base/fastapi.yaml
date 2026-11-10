@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi
+  namespace: mon-app
+spec:
+  selector:
+    matchLabels:
+      app: fastapi
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fastapi
+    spec:
+      serviceAccountName: fastapi-sa
+      containers:
+      - name: fastapi
+        image: ahmedfanidi/fastapi-demo:latest
+        imagePullPolicy: Always
+        # 👈 On supprime la section "env" en dur. 
+        # On utilise uniquement envFrom pour charger le ConfigMap et le Secret.
+        envFrom:
+        - configMapRef:
+            name: redis-config
+        - secretRef:
+            name: redis-secret
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service
+  namespace: mon-app
+spec:
+  type: ClusterIP
+  selector:
+    app: fastapi
+  ports:
+  - port: 80
+    targetPort: 8000

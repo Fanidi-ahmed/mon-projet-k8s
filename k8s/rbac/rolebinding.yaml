@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dev-alice-binding
+  namespace: mon-app
+subjects:
+- kind: User
+  name: dev-alice
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: global-reader
+  apiGroup: rbac.authorization.k8s.io

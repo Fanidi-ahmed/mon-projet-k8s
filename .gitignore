@@ -1,0 +1,12 @@
+# Dossiers d'environnement
+.venv/
+__pycache__/
+
+# Fichiers systèmes
+.DS_Store
+
+# Secrets (on ne met JAMAIS de secrets en clair sur Git)
+*.key
+*.crt
+# Si tu as un fichier de valeurs sensibles
+# secrets.yaml

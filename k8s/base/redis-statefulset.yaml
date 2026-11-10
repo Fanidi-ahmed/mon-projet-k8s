@@ -1,0 +1,59 @@
+# 1. Le Headless Service (obligatoire pour le DNS stable)
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-headless
+  namespace: mon-app
+spec:
+  clusterIP: None # 👈 C'est ce qui en fait un Headless Service
+  selector:
+    app: redis
+  ports:
+  - port: 6379
+    targetPort: 6379
+---
+# 2. Le StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: mon-app
+spec:
+  serviceName: "redis-headless" # 👈 Lien vers le Headless Service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        command: ["sh", "-c", "redis-server --requirepass $REDIS_PASSWORD"]
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: redis-secret
+              key: REDIS_PASSWORD
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: redis-storage
+          mountPath: /data
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+  # 👈 Le template de volume (le PVC sera créé automatiquement pour chaque pod)
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi

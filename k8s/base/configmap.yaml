@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: mon-app
+data:
+  REDIS_HOST: "redis-headless" # 👈 Modifié

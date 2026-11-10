@@ -1,0 +1,6 @@
+# Valeurs personnalisées pour la stack de monitoring
+grafana:
+  adminPassword: "admin123" # À changer en production
+prometheus:
+  prometheusSpec:
+    retention: 7d
