@@ -11,7 +11,7 @@ namespace: mon-app
 # On modifie les réplicas pour le dev (1 seul)
 replicas:
   - name: fastapi
-    count: 2
+    count: 1
   - name: redis
     count: 1
 
