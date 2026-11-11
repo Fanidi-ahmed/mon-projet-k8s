@@ -1,0 +1,25 @@
+# Configuration globale
+replicaCount: 1
+namespace: mon-app
+
+# Configuration de l'image FastAPI
+fastapi:
+  image:
+    repository: ahmedfanidi/fastapi-demo
+    tag: latest
+    pullPolicy: Always
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+# Configuration de Redis
+redis:
+  image: redis:7-alpine
+  storage: 1Gi
+
+# Configuration des secrets
+redisPassword: "monmotdepasse"
